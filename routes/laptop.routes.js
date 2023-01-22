@@ -6,7 +6,22 @@ const { converter } = require("../middlewares/Imageconverter");
 
 LaptopRouter.get("/", async (req, res) => {
   try {
-    const laptop = await Laptopmodel.find();
+    const query = {};
+    if (req.query.brand) query.brand = req.query.brand;
+    if (req.query.model) query.model = req.query.model;
+    if (req.query.city) query.city = req.query.city;
+    if (req.query.id) query._id = req.query.id; // Use _id instead of id
+
+    // Pagination
+
+    const laptop = await Laptopmodel.find(query).sort(
+      req.query.sort === "asc"
+        ? { price: 1 }
+        : req.query.sort === "desc"
+        ? { price: -1 }
+        : query
+    );
+
     res.send(laptop);
   } catch (error) {
     res.send(error);

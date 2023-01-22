@@ -3,16 +3,28 @@ const bikeRouter = express.Router();
 
 const { Bikemodel } = require("../models/Bikes.model");
 const { converter } = require("../middlewares/Imageconverter");
-
 bikeRouter.get("/", async (req, res) => {
   try {
-    const bikes = await Bikemodel.find();
+    const query = {};
+    if (req.query.brand) query.brand = req.query.brand;
+    if (req.query.model) query.model = req.query.model;
+    if (req.query.city) query.city = req.query.city;
+    if (req.query.id) query._id = req.query.id; // Use _id instead of id
+
+    // Pagination
+
+    const bikes = await Bikemodel.find(query).sort(
+      req.query.sort === "asc"
+        ? { price: 1 }
+        : req.query.sort === "desc"
+        ? { price: -1 }
+        : query
+    );
     res.send(bikes);
   } catch (error) {
     res.send(error);
   }
 });
-
 bikeRouter.post("/post", converter, async (req, res) => {
   try {
     const new_bike = new Bikemodel({

@@ -6,7 +6,22 @@ const { converter } = require("../middlewares/Imageconverter");
 
 CarRouter.get("/", async (req, res) => {
   try {
-    const cars = await Carsmodel.find();
+    const query = {};
+    if (req.query.brand) query.brand = req.query.brand;
+    if (req.query.model) query.model = req.query.model;
+    if (req.query.city) query.city = req.query.city;
+    if (req.query.id) query._id = req.query.id; // Use _id instead of id
+
+    // Pagination
+
+    const cars = await Carsmodel.find(query).sort(
+      req.query.sort === "asc"
+        ? { price: 1 }
+        : req.query.sort === "desc"
+        ? { price: -1 }
+        : query
+    );
+
     res.send(cars);
   } catch (error) {
     res.send(error);
