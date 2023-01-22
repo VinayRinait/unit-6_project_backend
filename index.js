@@ -23,8 +23,8 @@ app.use(
 );
 app.use(express.json());
 app.use("/users", registerRouter);
-app.use(authenticate);
 app.use("/", allRouter);
+app.use(authenticate);
 app.use("/bikes", bikeRouter);
 app.use("/cars", CarRouter);
 app.use("/laptops", LaptopRouter);
